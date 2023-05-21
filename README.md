@@ -2,6 +2,12 @@
 
 ## Operational Manual
 
+Dataset :- 
+For this project, we have created our own dataset of 8 different dance forms by downloading
+dance videos from the internet. The dataset includes videos of the following dance forms:
+Bharatanatyam, Kathak, Kuchipudi, Odissi, Manipuri, Mohiniyattam, Sattriya, and kathakali.
+Then we divided videos into 8 folders.
+
 Introduction:
 The project is divided into two main parts: training the model and using the model to make
 predictions. This manual will explain how to use the trained model to make predictions.
