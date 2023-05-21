@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Dance Style Classification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eee8e8;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      margin-top: 50px;
+      padding: 20px;
+      background-color: #fffafa;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-input {
+      margin: 20px auto;
+      width: 200px;
+      height: 50px;
+      position: relative;
+      overflow: hidden;
+      background-color: #58636d;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 3px;
+      text-align: center;
+      border-radius: 50px;
+      padding-top: 20px;
+    }
+
+    .file-input input[type=file] {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      opacity: 0;
+      font-size: 200px;
+      cursor: pointer;
+    }
+
+    #predict-button {
+      display: block;
+      margin: 0 auto;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 3px;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    #predict-button:hover {
+      background-color: #0056b3;
+    }
+
+    #prediction {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 20px;
+      font-style: italic;
+      font-weight: bolder;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Dance Form Recognition</h1>
+  <form action="/predict" method="POST" enctype="multipart/form-data">
+    <div class="file-input">
+      <span>Browse video file</span>
+      <input type="file" id="video-file" name="video">
+    </div>
+    <div></div>
+    <button id="predict-button">Predict</button>
+    <div id="prediction">
+      {% if prediction %}
+      Predicted dance style: {{ prediction }}
+      {% endif %}
+    </div>
+  </form>
+  <script>
+    const predictButton = document.getElementById('predict-button');
+const videoInput = document.getElementById('video-file');
+
+videoInput.addEventListener('change', function() {
+  const file = this.files[0];
+  const video = document.createElement('video');
+  video.preload = 'metadata';
+  video.src = URL.createObjectURL(file);
+  video.onloadedmetadata = function() {
+    if (video.duration > 30) {
+      alert('Video duration should not exceed 30 seconds');
+      videoInput.value = null;
+    }
+  };
+});
+
+predictButton.addEventListener('click', () => {
+  const videoFile = videoInput.files[0];
+  if (!videoFile) {
+    alert('Please select a video file');
+    return;
+  }
+  const formData = new FormData();
+  formData.append('video', videoFile);
+  fetch('http://localhost:8000/predict', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      const predictionDiv = document.getElementById('prediction');
+      predictionDiv.innerHTML = `Predicted dance style: ${data.prediction}`;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+});
+
+  </script>
+</body>
+
+</html>
+
+
+<!-- <script>
+  const predictButton = document.getElementById('predict-button');
+  predictButton.addEventListener('click', () => {
+    const videoInput = document.getElementById('video-file');
+    const videoFile = videoInput.files[0];
+    const formData = new FormData();
+    formData.append('video', videoFile);
+    fetch('http://localhost:8000/predict', {
+      method: 'POST',
+      body: formData
+    })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  });
+</script> -->
